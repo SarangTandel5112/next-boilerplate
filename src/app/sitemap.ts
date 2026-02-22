@@ -1,6 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { AppConfig } from '@/utils/AppConfig';
-import { getBaseUrl, getI18nPath } from '@/utils/Helpers';
+import { getBaseUrl } from '@/modules/common';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = getBaseUrl();
@@ -14,12 +13,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return allRoutes.map(route => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
-    alternates: {
-      languages: Object.fromEntries(
-        AppConfig.locales
-          .filter(locale => locale !== AppConfig.defaultLocale)
-          .map(locale => [locale, `${baseUrl}${getI18nPath(route, locale)}`]),
-      ),
-    },
   }));
 }

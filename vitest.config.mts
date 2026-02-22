@@ -9,7 +9,22 @@ export default defineConfig({
   test: {
     coverage: {
       include: ['src/**/*'],
-      exclude: ['src/**/*.stories.{js,jsx,ts,tsx}'],
+      exclude: [
+        'src/**/*.stories.{js,jsx,ts,tsx}',
+        'node_modules/',
+        'tests/',
+        '**/*.config.*',
+        '**/*.d.ts',
+        '**/index.ts',
+      ],
+      provider: 'v8',
+      reporter: ['text', 'json', 'html', 'lcov'],
+      thresholds: {
+        lines: 50,
+        functions: 50,
+        branches: 40,
+        statements: 50,
+      },
     },
     projects: [
       {

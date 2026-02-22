@@ -1,13 +1,10 @@
-import { useTranslations } from 'next-intl';
-import { AppConfig } from '@/utils/AppConfig';
+import { AppConfig, getMessage, messagesCatalog, renderMessage } from '@/modules/common';
 
 export const BaseTemplate = (props: {
   leftNav: React.ReactNode;
   rightNav?: React.ReactNode;
   children: React.ReactNode;
 }) => {
-  const t = useTranslations('BaseTemplate');
-
   return (
     <div className="w-full px-1 text-gray-700 antialiased">
       <div className="mx-auto max-w-screen-md">
@@ -16,7 +13,9 @@ export const BaseTemplate = (props: {
             <h1 className="text-3xl font-bold text-gray-900">
               {AppConfig.name}
             </h1>
-            <h2 className="text-xl">{t('description')}</h2>
+            <h2 className="text-xl">
+              {getMessage('BaseTemplate', 'description')}
+            </h2>
           </div>
 
           <div className="flex justify-between">
@@ -37,10 +36,10 @@ export const BaseTemplate = (props: {
         <main>{props.children}</main>
 
         <footer className="border-t border-gray-300 py-8 text-center text-sm">
-          {t.rich('footer_text', {
+          {renderMessage(messagesCatalog.BaseTemplate.footer_text, {
             year: new Date().getFullYear(),
             name: AppConfig.name,
-            author: () => (
+            author: (
               <a
                 href="https://nextjs-boilerplate.com"
                 className="text-blue-700 hover:border-b-2 hover:border-blue-700"

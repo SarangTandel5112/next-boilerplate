@@ -1,0 +1,10 @@
+import Link from 'next/link';
+import { ROUTES } from '../constants';
+
+export const DemoBanner = () => (
+  <div className="sticky top-0 z-50 bg-gray-900 p-4 text-center text-lg font-semibold text-gray-100 [&_a]:text-fuchsia-500 [&_a:hover]:text-indigo-500">
+    Live Demo of Next.js Boilerplate -
+    {' '}
+    <Link href={ROUTES.ABOUT}>Explore the About page</Link>
+  </div>
+);

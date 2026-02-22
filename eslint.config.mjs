@@ -30,6 +30,9 @@ export default antfu(
     // Ignored paths
     ignores: [
       'migrations/**/*',
+      'docs/**',
+      '**/*.md',
+      'lighthouserc.js',
     ],
   },
   // --- Accessibility Rules ---
@@ -67,11 +70,16 @@ export default antfu(
       'react-hooks/incompatible-library': 'off', // Disable warning for compilation skipped
       'react-hooks/exhaustive-deps': 'off', // Disable exhaustive-deps in useEffect
       'node/prefer-global/process': 'off', // Allow using `process.env`
+      'ts/no-explicit-any': 'error', // Disallow `any`
       'test/padding-around-all': 'error', // Add padding in test files
       'test/prefer-lowercase-title': 'off', // Allow using uppercase titles in test titles
       'jsdoc/require-jsdoc': 'off', // JSDoc comments are optional
       'jsdoc/require-returns': 'off', // Return types are optional
       'jsdoc/require-hyphen-before-param-description': 'error', // Enforce hyphen before param description
     },
+  },
+  // Ensure docs and markdown are never linted as code
+  {
+    ignores: ['**/docs/**', '**/*.md', '**/lighthouserc.js', '**/postcss.config.mjs'],
   },
 );

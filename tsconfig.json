@@ -60,6 +60,9 @@
       "@/*": [
         "./src/*"
       ],
+      "@modules/*": [
+        "./src/modules/*"
+      ],
       "@/public/*": [
         "./public/*"
       ]

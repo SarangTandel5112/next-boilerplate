@@ -1,0 +1,143 @@
+# Cursor Rules
+
+## CORE PHILOSOPHY
+- Default to Server Components.
+- Minimize client JavaScript.
+- Keep UI pure and predictable.
+- Separate data, logic, and presentation.
+- Avoid over-engineering.
+- Optimize for production scalability.
+- Prefer clarity and consistency over cleverness.
+
+## MODULE-BASED ARCHITECTURE
+- All feature logic must stay inside its module: `src/modules/<feature>/`.
+- Required module structure:
+  - `components/`
+  - `hooks/`
+  - `services/`
+  - `dto/`
+  - `types/`
+  - `enums/`
+  - `constants/`
+  - `helpers/`
+  - `validations/`
+  - `mappers/`
+  - `index.ts`
+- Each folder must expose a barrel `index.ts`.
+- Module root `index.ts` must re-export all module folders.
+- Named exports only. No default exports for components or utilities.
+- No deep imports:
+  - ❌ `@/modules/user/types/user.type`
+  - ✅ `@/modules/user`
+- No global enums/types/constants folders.
+- Cross-domain logic goes in `modules/common/` or `shared/` only.
+- No business logic inside shared UI components.
+- No circular dependencies.
+- Avoid cross-module tight coupling; use DTOs and mappers.
+
+## NEXT.JS 16 BEST PRACTICES
+- Server Components by default.
+- Add `"use client"` only when required:
+  - React state/hooks
+  - Browser APIs
+  - Event handlers
+- Avoid unnecessary client components.
+- Use Server Actions for mutations only.
+- No heavy business logic inside Server Actions.
+- Keep Server Actions small, validated, and side-effect scoped.
+- Use `layout.tsx`, `loading.tsx`, `error.tsx`, `not-found.tsx` correctly.
+- Use `export const metadata` for metadata.
+- No manual `<head>` usage.
+- Use `next/link` for navigation.
+- Use `next/image` for images.
+- Use `next/font` for fonts.
+- Avoid client-side fetching when server fetch is possible.
+- Use correct fetch caching strategies (`force-cache`, `no-store`, `revalidate`).
+- Avoid `useEffect` data fetching unless unavoidable.
+- No legacy Pages Router patterns.
+
+## REACT BEST PRACTICES (VERCEL-ALIGNED)
+- Components must be small and focused.
+- No data transformation inside JSX.
+- No API calls inside components.
+- No business logic inside UI.
+- Extract logic to `hooks/`, `services/`, `mappers/`.
+- Avoid prop drilling beyond 2 levels.
+- Prefer composition over large components.
+- Avoid unnecessary context usage.
+- Avoid excessive `useEffect`.
+- Prefer derived data over stored state.
+- No overuse of memoization (`useMemo`, `useCallback`).
+- Avoid inline heavy functions in lists; move logic to helpers/hooks.
+- No `any` types.
+- Prefer union types over enums when appropriate.
+- Avoid magic strings; centralize constants.
+- Avoid `useEffect` for derived state synchronization.
+- Avoid `useEffect` for event handling; use direct handlers.
+- Avoid `useEffect` to “fix” rendering; fix the source data/props.
+
+## REACT HOOKS USAGE RULES
+- `useState`:
+  - Use only for user-driven or async state.
+  - Prefer derived state from props or selectors.
+  - Avoid storing computed values in state.
+- `useEffect`:
+  - Only for side effects (subscriptions, imperative APIs, non-React sync).
+  - Do not use for data fetching when server fetch is possible.
+  - Do not use for state derivation.
+  - Always list correct dependencies; no intentional omission.
+- `useMemo`/`useCallback`:
+  - Use only for proven performance bottlenecks.
+  - Never as a default optimization.
+- `useRef`:
+  - Only for mutable instance values or DOM references.
+  - Do not use as a replacement for state.
+- `useReducer`:
+  - Only when state transitions are complex.
+  - Prefer smaller state slices.
+- Hooks must follow Rules of Hooks.
+- Custom hooks must start with `use` and be colocated in `hooks/`.
+- Hooks must be pure; no side effects outside effects.
+
+## DATA & API LAYER RULES
+- All API calls must live in `services/`.
+- No direct `fetch` inside components.
+- No hardcoded URLs.
+- Base API URL must come from environment config.
+- DTOs represent backend contracts.
+- UI models must be mapped via `mappers/`.
+- Do not expose backend response shapes directly to UI.
+- Validate inputs at the boundary (services/actions).
+
+## ENVIRONMENT RULES
+- All env access must go through `Env` wrapper.
+- No direct `process.env` usage.
+- Only `NEXT_PUBLIC_*` in client components.
+- Never expose secrets.
+
+## FRONTEND-ONLY ENFORCEMENT
+- No middleware.
+- No `proxy.ts`.
+- No backend infrastructure layers.
+- No database logic.
+- No Node-only modules unless browser-safe.
+- Server Components and Server Actions are allowed.
+- No backend responsibility layers.
+
+## PERFORMANCE & SCALABILITY
+- Prefer server rendering.
+- Keep client bundle minimal.
+- Use dynamic imports for heavy modules.
+- Use Suspense where applicable.
+- Avoid unnecessary global state.
+- Modules must scale to 20+ features.
+- API layer must be replaceable.
+- Keep clear separation between domain modules.
+- Avoid large components (>300 lines); split by responsibility.
+
+## SECURITY
+- No `dangerouslySetInnerHTML` without sanitization.
+- No unsafe token storage.
+- No exposed secrets.
+- Validate all external input.
+- Sanitize any HTML or markdown before rendering.

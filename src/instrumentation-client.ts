@@ -2,10 +2,11 @@
 // The added config here will be used whenever a users loads a page in their browser.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 import * as Sentry from '@sentry/nextjs';
+import { Env } from '@/libs/Env';
 
-if (!process.env.NEXT_PUBLIC_SENTRY_DISABLED) {
+if (!Env.NEXT_PUBLIC_SENTRY_DISABLED) {
   Sentry.init({
-    dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+    dsn: Env.NEXT_PUBLIC_SENTRY_DSN,
 
     // Add optional integrations for additional features
     integrations: [
@@ -17,7 +18,7 @@ if (!process.env.NEXT_PUBLIC_SENTRY_DISABLED) {
       Sentry.consoleLoggingIntegration(),
       Sentry.browserTracingIntegration(),
 
-      ...(process.env.NODE_ENV === 'development'
+      ...(Env.NODE_ENV === 'development'
         ? [Sentry.spotlightBrowserIntegration()]
         : []),
     ],

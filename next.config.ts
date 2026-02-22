@@ -1,24 +1,63 @@
 import type { NextConfig } from 'next';
 import withBundleAnalyzer from '@next/bundle-analyzer';
 import { withSentryConfig } from '@sentry/nextjs';
-import createNextIntlPlugin from 'next-intl/plugin';
 import './src/libs/Env';
 
 // Define the base Next.js configuration
 const baseConfig: NextConfig = {
+  compress: true,
+  experimental: {
+    fetchCacheKeyPrefix: 'v1',
+    optimizePackageImports: ['@/modules/common', '@/modules/counter'],
+  },
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-DNS-Prefetch-Control', value: 'on' },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload',
+          },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-XSS-Protection', value: '1; mode=block' },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()',
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              'default-src \'self\'',
+              'script-src \'self\' \'unsafe-eval\' \'unsafe-inline\' *.posthog.com *.vercel-insights.com va.vercel-scripts.com',
+              'style-src \'self\' \'unsafe-inline\'',
+              'img-src \'self\' blob: data: https:',
+              'font-src \'self\' data:',
+              'connect-src \'self\' *.posthog.com *.sentry.io *.vercel-insights.com vitals.vercel-insights.com',
+              'frame-ancestors \'self\'',
+              'base-uri \'self\'',
+              'form-action \'self\'',
+            ].join('; '),
+          },
+        ],
+      },
+    ];
+  },
   devIndicators: {
     position: 'bottom-right',
   },
   poweredByHeader: false,
   reactStrictMode: true,
   reactCompiler: process.env.NODE_ENV === 'production', // Keep the development environment fast
-  outputFileTracingIncludes: {
-    '/': ['./migrations/**/*'],
-  },
 };
 
-// Initialize the Next-Intl plugin
-let configWithPlugins = createNextIntlPlugin('./src/libs/I18n.ts')(baseConfig);
+let configWithPlugins: NextConfig = baseConfig;
 
 // Conditionally enable bundle analysis
 if (process.env.ANALYZE === 'true') {
