@@ -135,7 +135,7 @@ async function callAPI() {
 
 1. **Never commit** `.env.local` or `.env.production.local`
 2. **Always** use `.env.example` as template
-3. **Validate** all env vars in `src/libs/Env.ts`
+3. **Validate** all env vars in `src/shared/config/env.ts`
 
 ### Public vs Private
 

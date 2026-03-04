@@ -1,493 +1,330 @@
-# Boilerplate and Starter for Next.js 16+, Tailwind CSS 4, and TypeScript.
+# Next.js Enterprise Boilerplate
 
-<p align="center">
-  <a href="https://demo.nextjs-boilerplate.com">
-    <img
-      src="public/assets/images/nextjs-starter-banner.png?raw=true"
-      alt="Next js starter banner"
-      style="max-width: 100%; height: auto;"
-    />
-  </a>
-</p>
+## 1. Project Overview
+This repository is a production-grade Next.js 16 App Router boilerplate for admin/SaaS workloads.
 
-🚀 Boilerplate and Starter for Next.js with App Router, Tailwind CSS, and TypeScript ⚡️ Prioritizing developer experience first: Next.js, TypeScript, ESLint, Prettier, Lefthook (replacing Husky), Lint-Staged, Vitest (replacing Jest), Testing Library, Playwright, Commitlint, VSCode, Tailwind CSS, Error Monitoring with [Sentry](https://sentry.io/for/nextjs/?utm_source=github&utm_medium=paid-community&utm_campaign=general-fy25q1-nextjs&utm_content=github-banner-nextjsboilerplate-logo), Storybook, AI-powered code reviews with CodeRabbit, and more.
+Core qualities:
+- Strict layering and import boundaries
+- Server-authenticated admin area with RBAC
+- Structured logging and request tracing
+- Standardized API error handling
+- CSRF protection and login rate limiting
+- Dockerized deployment with standalone output
+- CI-enforced quality and architecture checks
 
-Clone this project and use it to create your own Next.js project. You can check out the live demo at [Next.js Boilerplate](https://demo.nextjs-boilerplate.com).
-
-## Sponsors
-
-<table width="100%">
-  <tr height="187px">
-    <td align="center" width="33%">
-      <a href="https://www.coderabbit.ai?utm_source=next_js_starter&utm_medium=github&utm_campaign=next_js_starter_oss_2025">
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="public/assets/images/coderabbit-logo-dark.svg?raw=true">
-          <source media="(prefers-color-scheme: light)" srcset="public/assets/images/coderabbit-logo-light.svg?raw=true">
-          <img alt="CodeRabbit" src="public/assets/images/coderabbit-logo-light.svg?raw=true">
-        </picture>
-      </a>
-    </td>
-    <td align="center" width="33%">
-      <a href="https://sentry.io/for/nextjs/?utm_source=github&utm_medium=paid-community&utm_campaign=general-fy25q1-nextjs&utm_content=github-banner-nextjsboilerplate-logo">
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="public/assets/images/sentry-white.png?raw=true">
-          <source media="(prefers-color-scheme: light)" srcset="public/assets/images/sentry-dark.png?raw=true">
-          <img alt="Sentry" src="public/assets/images/sentry-dark.png?raw=true">
-        </picture>
-      </a>
-    </td>
-  </tr>
-  <tr height="187px">
-    <td align="center" width="33%">
-      <a href="https://sevalla.com/">
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="public/assets/images/sevalla-dark.png">
-          <source media="(prefers-color-scheme: light)" srcset="public/assets/images/sevalla-light.png">
-          <img alt="Sevalla" src="public/assets/images/sevalla-light.png">
-        </picture>
-      </a>
-    </td>
-    <td align="center" width="33%">
-      <a href="https://posthog.com/?utm_source=github&utm_medium=sponsorship&utm_campaign=next-js-boilerplate">
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="https://posthog.com/brand/posthog-logo-white.svg">
-          <source media="(prefers-color-scheme: light)" srcset="https://posthog.com/brand/posthog-logo.svg">
-          <img alt="PostHog" src="https://posthog.com/brand/posthog-logo.svg">
-        </picture>
-      </a>
-    </td>
-    <td align="center" width="33%">
-      <a href="https://l.crowdin.com/next-js">
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="public/assets/images/crowdin-white.png?raw=true">
-          <source media="(prefers-color-scheme: light)" srcset="public/assets/images/crowdin-dark.png?raw=true">
-          <img alt="Crowdin" src="public/assets/images/crowdin-dark.png?raw=true">
-        </picture>
-      </a>
-    </td>
-  </tr>
-  <tr height="187px">
-    <td align="center" width="33%">
-      <a href="https://betterstack.com/?utm_source=github&utm_medium=sponsorship&utm_campaign=next-js-boilerplate">
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="public/assets/images/better-stack-white.png?raw=true">
-          <source media="(prefers-color-scheme: light)" srcset="public/assets/images/better-stack-dark.png?raw=true">
-          <img alt="Better Stack" src="public/assets/images/better-stack-dark.png?raw=true">
-        </picture>
-      </a>
-    </td>
-    <td align="center" width="33%">
-      <a href="https://posthog.com/?utm_source=github&utm_medium=sponsorship&utm_campaign=next-js-boilerplate">
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="https://posthog.com/brand/posthog-logo-white.svg">
-          <source media="(prefers-color-scheme: light)" srcset="https://posthog.com/brand/posthog-logo.svg">
-          <img alt="PostHog" src="https://posthog.com/brand/posthog-logo.svg">
-        </picture>
-      </a>
-    </td>
-    <td align="center" width="33%">
-      <a href="mailto:contact@nextjs-boilerplate.com">
-        Add your logo here
-      </a>
-    </td>
-  </tr>
-  <tr height="187px">
-    <td align="center" style=width="33%">
-      <a href="https://nextjs-boilerplate.com/pro-saas-starter-kit">
-        <img src="public/assets/images/nextjs-boilerplate-saas.png?raw=true" alt="Next.js SaaS Boilerplate with React" />
-      </a>
-    </td>
-    <td align="center" width="33%">
-      <a href="mailto:contact@nextjs-boilerplate.com">
-        Add your logo here
-      </a>
-    </td>
-  </tr>
-</table>
-
-### Features
-
-Developer experience first, extremely flexible code structure and only keep what you need:
-
-- ⚡ [Next.js](https://nextjs.org) with App Router support
-- 🔥 Type checking [TypeScript](https://www.typescriptlang.org)
-- 💎 Integrate with [Tailwind CSS](https://tailwindcss.com)
-- 🤖 AI coding agent instructions for Claude Code, Codex, Cursor, OpenCode, Copilot, and more
-- ✅ Strict Mode for TypeScript and React 19
-- ♻️ Type-safe environment variables with T3 Env
-- ⌨️ Form handling with React Hook Form
-- 🔴 Validation library with Zod
-- 📏 Linter with ESLint (default Next.js, Next.js Core Web Vitals, Tailwind CSS and Antfu configuration)
-- 💖 Code Formatter with Prettier
-- 🦊 Husky for Git Hooks (replaced by Lefthook)
-- 🚫 Lint-staged for running linters on Git staged files
-- 🚓 Lint git commit with Commitlint
-- 📓 Write standard compliant commit messages with Commitizen
-- 🔍 Unused files and dependencies detection with Knip
-- 🦺 Unit Testing with Vitest and Browser mode (replacing React Testing Library)
-- 🧪 Integration and E2E Testing with Playwright
-- 👷 Run tests on pull request with GitHub Actions
-- 🎉 Storybook for UI development
-- 🐰 AI-powered code reviews with [CodeRabbit](https://www.coderabbit.ai?utm_source=next_js_starter&utm_medium=github&utm_campaign=next_js_starter_oss_2025)
-- 🚨 Error Monitoring with [Sentry](https://sentry.io/for/nextjs/?utm_source=github&utm_medium=paid-community&utm_campaign=general-fy25q1-nextjs&utm_content=github-banner-nextjsboilerplate-logo)
-- 🔍 Local development error monitoring with Sentry Spotlight
-- ☂️ Code coverage with Codecov
-- 📝 Logging with [Better Stack](https://betterstack.com/?utm_source=github&utm_medium=sponsorship&utm_campaign=next-js-boilerplate)
-- 📊 Analytics with PostHog
-- 🎁 Automatic changelog generation with Semantic Release
-- 🔍 Visual regression testing
-- 💡 Absolute Imports using `@` prefix
-- 🗂 VSCode configuration: Debug, Settings, Tasks and Extensions
-- 🤖 SEO metadata, JSON-LD and Open Graph tags
-- 🗺️ Sitemap.xml and robots.txt
-- 👷 Automatic dependency updates with Dependabot
-- ⚙️ Bundler Analyzer
-- 🌈 Include a FREE minimalist theme
-- 💯 Maximize lighthouse score
-
-Built-in features from Next.js:
-
-- ☕ Minify HTML & CSS
-- 💨 Live reload
-- ✅ Cache busting
-
-Optional features (easy to add):
-
-- 🔑 Multi-tenancy, Role-based access control (RBAC)
-- 🔐 OAuth for Single Sign-On (SSO), Enterprise SSO, SAML, OpenID Connect (OIDC), EASIE
-- 🔗 Web 3 (Base, MetaMask, Coinbase Wallet, OKX Wallet)
-
-### Philosophy
-
-- Nothing is hidden from you, allowing you to make any necessary adjustments to suit your requirements and preferences.
-- Dependencies are regularly updated on a monthly basis
-- Start for free without upfront costs
-- Easy to customize
-- Minimal code
-- Unstyled template
-- SEO-friendly
-- 🚀 Production-ready
-
-### Requirements
-
-- Node.js 22+ and npm
-
-### Getting started
-
-Run the following command on your local environment:
-
-```shell
-git clone --depth=1 https://github.com/ixartz/Next-js-Boilerplate.git my-project-name
-cd my-project-name
-npm install
+## 2. Architecture Diagram (Tree)
+```text
+src/
+├── app/                          # App Router entrypoints, route groups, API routes
+│   ├── (admin)/                  # Protected admin routes
+│   ├── (auth)/                   # Authentication routes
+│   └── api/                      # Route handlers
+├── modules/                      # Feature modules (products, brands, categories, auth, admin)
+│   ├── <domain>/
+│   │   ├── domain/               # Domain types/contracts
+│   │   ├── application/          # Use-cases (business orchestration)
+│   │   ├── infrastructure/       # Repository implementations
+│   │   ├── hooks/                # Feature hooks
+│   │   └── components/           # Feature UI
+├── shared/                       # Cross-domain, dependency-safe primitives
+│   ├── config/                   # Env/config/constants
+│   ├── lib/                      # Utilities and shared clients
+│   ├── hooks/                    # Reusable hooks only
+│   ├── types/                    # Global shared declarations/types
+│   └── ui/                       # Truly cross-domain UI primitives
+└── server/                       # Server-only platform concerns
+    ├── auth/                     # Session + RBAC
+    ├── errors/                   # AppError + wrapper
+    ├── logging/                  # Pino structured logger
+    ├── security/                 # CSRF + rate limit
+    └── api/                      # Reserved for server API helpers
 ```
 
-For your information, all dependencies are updated every month.
+## 3. Folder Responsibility Breakdown
+- `app`: Routing, segment-level loading/error UX, page composition.
+- `modules`: Feature code and business operations.
+- `shared`: Reusable code that does not depend on feature or route layers.
+- `server`: Runtime-only infrastructure (security, logging, error boundaries for APIs).
 
-Then, you can run the project locally in development mode with live reload by executing:
+## 4. Route Groups Explanation
+- `(admin)`: Admin UI and protected resources.
+- `(auth)`: Login/authentication surfaces.
+- `api`: Route handlers using a centralized wrapper (`withRouteHandler`).
 
-```shell
+## 5. Loading & Error Strategy
+### Loading Strategy
+- Global fallback: `src/app/loading.tsx`
+- Admin group fallback: `src/app/(admin)/loading.tsx`
+- Auth group fallback: `src/app/(auth)/loading.tsx`
+- Feature-segment loading fallbacks remain available at route level.
+
+This ensures async server segments always render meaningful suspense UI.
+
+### Error Handling Strategy
+- Global boundary: `src/app/error.tsx`
+- Global terminal boundary: `src/app/global-error.tsx`
+- Group boundaries:
+  - `src/app/(admin)/error.tsx`
+  - `src/app/(auth)/error.tsx`
+- Feature route boundaries:
+  - `src/app/(admin)/admin/*/error.tsx`
+
+Principles:
+- No raw stack traces are shown to users.
+- User-facing messages are generic and safe.
+- Request digest/ID is surfaced when available.
+- Errors are logged through centralized monitoring hooks.
+
+## 6. Auth & RBAC Model
+- Auth uses signed session cookies (`HttpOnly`, `Secure` in production, `SameSite=Strict`).
+- Middleware protects `/admin/**`.
+- Admin layout performs server-side guard as defense-in-depth.
+- Role check currently enforces `admin` role.
+
+Auth flow:
+1. User submits login form.
+2. Route validates input + CSRF + rate limit.
+3. Credentials are checked (temporary in-memory source).
+4. Signed session cookie is issued.
+5. Middleware/layout permit admin route access.
+
+## 7. Repository Pattern Explanation
+Each domain uses:
+- `domain`: domain types
+- `application`: use-case layer
+- `infrastructure`:
+  - `repository.interface.ts`
+  - `local.repository.ts` (dev fallback)
+  - `api.repository.ts` (backend integration)
+  - `repository.factory.ts` (runtime selection)
+
+UI/hooks call use-cases; they do not depend directly on storage details.
+
+## 8. Logging & Observability
+- Structured JSON logging with `pino`: `src/server/logging/logger.ts`
+- Per-request child logger via request context (`requestId`, `path`, `method`)
+- Request ID injected by middleware (`x-request-id`)
+- Central API error wrapper logs all exceptions in one place
+- Client-side monitoring hooks remain available in `src/shared/lib/monitoring.ts`
+
+## 9. Security Model
+- CSP headers from middleware
+- Session cookie hardening
+- CSRF double-submit cookie pattern
+- Login rate limiting by IP+email key
+- Centralized API error normalization (no raw error leakage)
+
+### CSRF Strategy
+- Middleware seeds `csrf_token` cookie if missing.
+- Client includes `x-csrf-token` header for mutation requests.
+- Server validates cookie/header parity on mutation routes.
+
+### Rate Limiting Strategy
+- Login endpoint applies in-memory windowed limit.
+- Defaults:
+  - `AUTH_LOGIN_RATE_LIMIT_MAX=10`
+  - `AUTH_LOGIN_RATE_LIMIT_WINDOW_MS=900000`
+
+## 10. Environment Variables
+| Variable | Required | Scope | Description |
+| --- | --- | --- | --- |
+| `NEXT_PUBLIC_APP_URL` | Yes | Client/Server | Public app URL |
+| `NEXT_PUBLIC_API_BASE_URL` | No | Client/Server | External API base URL |
+| `NEXT_PUBLIC_DATA_SOURCE` | No | Client/Server | `auto` / `api` / `local` repository switch |
+| `AUTH_SESSION_SECRET` | Yes | Server | Session signing secret |
+| `AUTH_ADMIN_EMAIL` | Yes | Server | Admin login email |
+| `AUTH_ADMIN_PASSWORD` | Yes | Server | Admin login password |
+| `AUTH_LOGIN_RATE_LIMIT_MAX` | No | Server | Max login attempts per window |
+| `AUTH_LOGIN_RATE_LIMIT_WINDOW_MS` | No | Server | Login rate-limit window |
+| `NEXT_PUBLIC_LOGGING_LEVEL` | No | Client/Server | `error/info/debug/warning/trace/fatal` |
+| `LOG_LEVEL` | No | Server | Pino level (`fatal/error/warn/info/debug/trace/silent`) |
+| `NEXT_PUBLIC_POSTHOG_KEY` | No | Client | PostHog key |
+| `NEXT_PUBLIC_POSTHOG_HOST` | No | Client | PostHog host |
+| `NEXT_PUBLIC_SENTRY_DSN` | No | Client | Sentry DSN |
+| `NEXT_PUBLIC_SENTRY_DISABLED` | No | Client | Disable Sentry when set |
+
+## 11. Local Development Guide
+```bash
+npm install
 npm run dev
 ```
 
-Open http://localhost:3000 with your favorite browser to see your project.
-
-Need advanced features? Multi-tenancy & Teams, Roles & Permissions, Shadcn UI, End-to-End Typesafety with oRPC, Light / Dark mode. Try [Next.js Boilerplate Pro](https://nextjs-boilerplate.com/pro-saas-starter-kit).
-
-### Project structure
-
-```shell
-.
-├── README.md                       # README file
-├── .github                         # GitHub folder
-│   ├── actions                     # Reusable actions
-│   └── workflows                   # GitHub Actions workflows
-├── .storybook                      # Storybook folder
-├── .vscode                         # VSCode configuration
-├── public                          # Public assets folder
-├── src
-│   ├── app                         # Next JS App (App Router)
-│   ├── components                  # React components
-│   ├── libs                        # 3rd party libraries configuration
-│   ├── hooks                       # React hooks
-│   ├── services                    # Backend API clients
-│   ├── styles                      # Styles folder
-│   ├── templates                   # Templates folder
-│   ├── types                       # Type definitions
-│   ├── utils                       # Utilities folder
-│   └── validations                 # Validation schemas
-├── tests
-│   ├── e2e                         # E2E tests, also includes Monitoring as Code
-├── eslint.config.mjs               # ESLint configuration
-├── next.config.ts                  # Next JS configuration
-├── playwright.config.ts            # Playwright configuration
-├── vitest.config.mts               # Vitest configuration
-└── tsconfig.json                   # TypeScript configuration
-```
-
-### Customization
-
-You can easily configure Next js Boilerplate by searching the entire project for `FIXME:` to make quick customizations. Here are some of the most important files to customize:
-
-- `public/apple-touch-icon.png`, `public/favicon.ico`, `public/favicon-16x16.png` and `public/favicon-32x32.png`: your website favicon
-- `src/utils/AppConfig.ts`: configuration file
-- `src/templates/BaseTemplate.tsx`: default theme
-- `next.config.ts`: Next.js configuration
-- `.env`: default environment variables
-
-You have full access to the source code for further customization. The provided code is just an example to help you start your project. The sky's the limit 🚀.
-
-### Commit Message Format
-
-The project follows the [Conventional Commits](https://www.conventionalcommits.org/) specification, meaning all commit messages must be formatted accordingly. To help you write commit messages, the project provides an interactive CLI that guides you through the commit process. To use it, run the following command:
-
-```shell
-npm run commit
-```
-
-One of the benefits of using Conventional Commits is the ability to automatically generate GitHub releases. It also allows us to automatically determine the next version number based on the types of commits that are included in a release.
-
-#### Commit Types
-
-Every commit message follows Conventional Commits and must begin with a type prefix (e.g., `feat: add login page`). The table below lists the available types:
-
-| Type | Description |
-| --- | --- |
-| `feat` | New feature or functionality |
-| `fix` | Bug fix |
-| `docs` | Documentation only |
-| `style` | Code formatting without logic changes |
-| `refactor` | Code restructuring without behavior changes |
-| `perf` | Performance improvement |
-| `test` | Adding or updating tests |
-| `build` | Build system |
-| `ci` | CI configuration and scripts |
-| `chore` | Maintenance tasks (dependencies, config) |
-| `revert` | Reverts a previous commit |
-
-### CodeRabbit AI Code Reviews
-
-The project uses [CodeRabbit](https://www.coderabbit.ai?utm_source=next_js_starter&utm_medium=github&utm_campaign=next_js_starter_oss_2025), an AI-powered code reviewer. CodeRabbit monitors your repository and automatically provides intelligent code reviews on all new pull requests using its powerful AI engine.
-
-Setting up CodeRabbit is simple, visit [coderabbit.ai](https://www.coderabbit.ai?utm_source=next_js_starter&utm_medium=github&utm_campaign=next_js_starter_oss_2025), sign in with your GitHub account, and add your repository from the dashboard. That's it!
-
-### Testing
-
-All unit tests are located alongside the source code in the same directory, making them easier to find. The unit test files follow this format: `*.test.ts` or `*.test.tsx`. The project uses Vitest and React Testing Library for unit testing. You can run the tests with the following command:
-
-```shell
+Quality commands:
+```bash
+npm run typecheck
+npm run lint
 npm run test
+npm run check:architecture
+npm run build
 ```
 
-### Integration & E2E Testing
+## 12. Docker Guide
+The Dockerfile is multi-stage and uses Next.js standalone output.
 
-The project uses Playwright for integration and end-to-end (E2E) testing. Integration test files use the `*.spec.ts` extension, while E2E test files use the `*.e2e.ts` extension. You can run the tests with the following commands:
-
-```shell
-npx playwright install # Only for the first time in a new environment
-npm run test:e2e
+Build:
+```bash
+docker build -t next-boilerplate-enterprise:latest .
 ```
 
-### Storybook
-
-Storybook is configured for UI component development and testing. The project uses Storybook with Next.js and Vite integration, including accessibility testing and documentation features.
-
-Stories are located alongside your components in the `src` directory and follow the pattern `*.stories.ts` or `*.stories.tsx`.
-
-You can run Storybook in development mode with:
-
-```shell
-npm run storybook
+Run:
+```bash
+docker run --rm -p 3000:3000 --env-file .env.production.local next-boilerplate-enterprise:latest
 ```
 
-This will start Storybook on http://localhost:6006 where you can view and interact with your UI components in isolation.
+Healthcheck endpoint:
+- `GET /api/health`
 
-To run Storybook tests in headless mode, you can use the following command:
+## 13. CI Pipeline Overview
+CI job executes:
+1. `npm run typecheck`
+2. `npm run lint`
+3. `npm run check:architecture`
+4. `npm run test`
+5. `npm run build`
 
-```shell
-npm run storybook:test
+Architecture violations and circular dependencies fail CI.
+
+## 14. Architecture Rules
+Enforced by:
+- `eslint-plugin-boundaries` (editor/lint feedback)
+- `dependency-cruiser` (pipeline-grade dependency policy)
+
+Rules:
+- `shared` cannot import from `modules`, `app`, or `server`
+- `modules` cannot import from `app`
+- `server` cannot import from `app`
+- `app` can import from `modules`, `server`, and `shared`
+- Circular dependencies are forbidden
+
+## 15. How To Add A New Feature
+1. Create `src/modules/<feature>/`.
+2. Add `domain/types.ts`.
+3. Add `application/use-cases.ts`.
+4. Add `infrastructure/repository.interface.ts`.
+5. Add infrastructure implementations (`local`/`api`).
+6. Add feature UI/hooks in `components/` + `hooks/`.
+7. Add app route under `src/app/(admin)/admin/<feature>/`.
+8. Add route-level loading/error UI if needed.
+9. Add tests.
+10. Run quality gate commands before opening PR.
+
+## 16. Testing Strategy
+- Unit tests: Vitest (`*.test.ts`)
+- Integration/E2E: Playwright where applicable
+- Architecture tests: dependency-cruiser via `check:architecture`
+- CI enforces all quality gates
+
+## 17. Troubleshooting Guide
+### Login fails with CSRF error
+- Ensure the browser has `csrf_token` cookie.
+- Confirm mutation request includes `x-csrf-token`.
+- Verify middleware runs for the login page.
+
+### Access denied on `/admin`
+- Confirm valid session cookie exists.
+- Confirm login user has `admin` role.
+
+### Architecture check fails
+- Run `npm run check:architecture`.
+- Inspect forbidden import path in output and move dependency downward.
+
+### Build warns about OpenTelemetry/Prisma instrumentation
+- This warning comes from transitive instrumentation packages.
+- Build can still complete successfully.
+
+### Docker build issues
+- Ensure Docker daemon is running.
+- Rebuild with no cache if needed: `docker build --no-cache ...`
+
+## 18. Data Layer Architecture
+### Architecture diagram
+```text
+src/
+└── shared/
+    └── lib/
+        ├── api/
+        │   ├── http-client.ts        # axios instance + adapter bridge
+        │   └── error-normalizer.ts   # transport error normalization
+        ├── http/
+        │   ├── http-adapter.interface.ts
+        │   ├── fetcher.ts
+        │   ├── server-fetcher.ts
+        │   └── client-fetcher.ts
+        └── react-query/
+            ├── query-client.ts
+            ├── stable-key.ts
+            └── global-mutation-error.ts
+
+src/modules/<domain>/
+├── infrastructure/
+│   └── api.repository.ts            # depends on HttpAdapter
+├── query-keys.ts                    # stable query keys
+└── hooks/                           # useQuery/useMutation integration
 ```
 
-### Deploy to production
-
-Then, you can generate a production build with:
-
-```shell
-$ npm run build
+### Server flow
+```text
+Server Component / Route
+  -> domain service/use-case
+    -> domain repository (api.repository.ts)
+      -> HttpAdapter.request()
+        -> backend/API route
 ```
 
-It generates an optimized production build of the boilerplate. To test the generated build, run:
-
-```shell
-$ npm run start
+### Client flow
+```text
+Client component
+  -> domain hook (useQuery/useMutation)
+    -> domain service/use-case
+      -> domain repository (api.repository.ts)
+        -> HttpAdapter.request()
+          -> React Query cache + network
 ```
 
-This command starts a local server using the production build. You can now open http://localhost:3000 in your preferred browser to see the result.
+### Query key strategy
+- Use deterministic key segments for parameterized keys via `createStableKey(...)`.
+- Stable serialization:
+  - sorts object keys
+  - removes `undefined` values
+  - handles nested arrays/objects safely
+- Never pass raw mutable objects directly as query key segments.
 
-### Error Monitoring
+### Data Fetching & Caching Policy
+- API route handlers: no implicit Next.js data cache assumptions.
+- Client caching is owned by TanStack Query (`staleTime`, `gcTime`, retries).
+- Server fetch adapter defaults to `cache: 'no-store'` in `server-fetcher.ts`.
+- Use explicit `next.revalidate` or `next.tags` only for intentionally cacheable server fetches.
+- Avoid mixing multiple cache authorities for the same data path.
 
-The project uses [Sentry](https://sentry.io/for/nextjs/?utm_source=github&utm_medium=paid-community&utm_campaign=general-fy25q1-nextjs&utm_content=github-banner-nextjsboilerplate-logo) to monitor errors.
+### Hydration strategy
+- Prefer server prefetch for first paint of expensive lists/details.
+- Dehydrate on server and hydrate in client boundary.
+- Client hooks reuse hydrated cache and avoid duplicate network fetch.
+- Keep server/query keys identical for prefetch and client hooks.
 
-#### Local development with Sentry and Spotlight
+### Transport adapter
+- Domain repositories depend on `HttpAdapter` (`request<T>(config)`), not concrete transport clients.
+- Current implementation uses axios-backed `httpAdapter`.
+- Alternative adapters (fetch, GraphQL, gRPC gateway, mocks) can be introduced without touching domain APIs.
 
-In the development environment, no additional setup is required: Next.js Boilerplate comes pre-configured with Sentry and Spotlight (Sentry for Development). All errors are automatically captured by your local Spotlight instance, enabling testing without sending data to Sentry Cloud.
+### Error handling flow
+- Transport errors normalize to `ApiError`.
+- Query mutations route errors through global mutation error mapper.
+- `MutationCache.onError` logs normalized payload and notifies optional listeners.
+- UI can subscribe to mapped global mutation errors without coupling to a toast library.
 
-You can inspect captured events, view stack traces, and analyze errors in the Spotlight UI at `http://localhost:8969`.
+### Developer rules
+- Do not call `fetch`/axios directly from UI components.
+- Do not build ad-hoc query keys in components.
+- Keep HTTP requests inside repository infrastructure.
+- Reuse `createStableKey` for any new parameterized key.
+- Keep API response and error shapes consistent.
 
-#### Production setup with Sentry
-
-For production environment, you'll need to create a Sentry account and a new project. Then, in `.env.production`, you need to update the following environment variables:
-
-```shell
-NEXT_PUBLIC_SENTRY_DSN=
-SENTRY_ORGANIZATION=
-SENTRY_PROJECT=
-```
-
-You also need to create a environment variable `SENTRY_AUTH_TOKEN` in your hosting provider's dashboard.
-
-### Code coverage
-
-Next.js Boilerplate relies on [Codecov](https://about.codecov.io/codecov-free-trial/?utm_source=github&utm_medium=paid-community&utm_campaign=general-fy25q1-nextjs&utm_content=github-banner-nextjsboilerplate-logo) for code coverage reporting solution. To enable Codecov, create a Codecov account and connect it to your GitHub account. Your repositories should appear on your Codecov dashboard. Select the desired repository and copy the token. In GitHub Actions, define the `CODECOV_TOKEN` environment variable and paste the token.
-
-Make sure to create `CODECOV_TOKEN` as a GitHub Actions secret, do not paste it directly into your source code.
-
-### Useful commands
-
-### Code Quality and Validation
-
-The project includes several commands to ensure code quality and consistency. You can run:
-
-- `npm run lint` to check for linting errors
-- `npm run lint:fix` to automatically fix fixable issues from the linter
-- `npm run check:types` to verify type safety across the entire project
-- `npm run check:deps` help identify unused dependencies and files
-
-#### Bundle Analyzer
-
-Next.js Boilerplate includes a built-in bundle analyzer. It can be used to analyze the size of your JavaScript bundles. To begin, run the following command:
-
-```shell
-npm run build-stats
-```
-
-By running the command, it'll automatically open a new browser window with the results.
-
-### VSCode information (optional)
-
-If you are VSCode user, you can have a better integration with VSCode by installing the suggested extension in `.vscode/extension.json`. The starter code comes up with Settings for a seamless integration with VSCode. The Debug configuration is also provided for frontend and backend debugging experience.
-
-With the plugins installed in your VSCode, ESLint and Prettier can automatically fix the code and display errors. The same applies to testing: you can install the VSCode Vitest extension to automatically run your tests, and it also shows the code coverage in context.
-
-Pro tips: if you need a project wide-type checking with TypeScript, you can run a build with <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>B</kbd> on Mac.
-
-### Contributions
-
-Everyone is welcome to contribute to this project. Feel free to open an issue if you have any questions or find a bug. Totally open to suggestions and improvements.
-
-### License
-
-Licensed under the MIT License, Copyright © 2026
-
-See [LICENSE](LICENSE) for more information.
-
-## Sponsors
-
-<table width="100%">
-  <tr height="187px">
-    <td align="center" width="33%">
-    </td>
-    <td align="center" width="33%">
-      <a href="https://www.coderabbit.ai?utm_source=next_js_starter&utm_medium=github&utm_campaign=next_js_starter_oss_2025">
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="public/assets/images/coderabbit-logo-dark.svg?raw=true">
-          <source media="(prefers-color-scheme: light)" srcset="public/assets/images/coderabbit-logo-light.svg?raw=true">
-          <img alt="CodeRabbit" src="public/assets/images/coderabbit-logo-light.svg?raw=true">
-        </picture>
-      </a>
-    </td>
-    <td align="center" width="33%">
-      <a href="https://sentry.io/for/nextjs/?utm_source=github&utm_medium=paid-community&utm_campaign=general-fy25q1-nextjs&utm_content=github-banner-nextjsboilerplate-logo">
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="public/assets/images/sentry-white.png?raw=true">
-          <source media="(prefers-color-scheme: light)" srcset="public/assets/images/sentry-dark.png?raw=true">
-          <img alt="Sentry" src="public/assets/images/sentry-dark.png?raw=true">
-        </picture>
-      </a>
-    </td>
-  </tr>
-  <tr height="187px">
-    <td align="center" width="33%">
-      <a href="https://posthog.com/?utm_source=github&utm_medium=sponsorship&utm_campaign=next-js-boilerplate">
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="https://posthog.com/brand/posthog-logo-white.svg">
-          <source media="(prefers-color-scheme: light)" srcset="https://posthog.com/brand/posthog-logo.svg">
-          <img alt="PostHog" src="https://posthog.com/brand/posthog-logo.svg">
-        </picture>
-      </a>
-    </td>
-    <td align="center" width="33%">
-      <a href="https://sevalla.com/">
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="public/assets/images/sevalla-dark.png">
-          <source media="(prefers-color-scheme: light)" srcset="public/assets/images/sevalla-light.png">
-          <img alt="Sevalla" src="public/assets/images/sevalla-light.png">
-        </picture>
-      </a>
-    </td>
-    <td align="center" width="33%">
-      <a href="https://l.crowdin.com/next-js">
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="public/assets/images/crowdin-white.png?raw=true">
-          <source media="(prefers-color-scheme: light)" srcset="public/assets/images/crowdin-dark.png?raw=true">
-          <img alt="Crowdin" src="public/assets/images/crowdin-dark.png?raw=true">
-        </picture>
-      </a>
-    </td>
-  </tr>
-  <tr height="187px">
-    <td align="center" width="33%">
-      <a href="https://betterstack.com/?utm_source=github&utm_medium=sponsorship&utm_campaign=next-js-boilerplate">
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="public/assets/images/better-stack-white.png?raw=true">
-          <source media="(prefers-color-scheme: light)" srcset="public/assets/images/better-stack-dark.png?raw=true">
-          <img alt="Better Stack" src="public/assets/images/better-stack-dark.png?raw=true">
-        </picture>
-      </a>
-    </td>
-    <td align="center" width="33%">
-      <a href="https://posthog.com/?utm_source=github&utm_medium=sponsorship&utm_campaign=next-js-boilerplate">
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="https://posthog.com/brand/posthog-logo-white.svg">
-          <source media="(prefers-color-scheme: light)" srcset="https://posthog.com/brand/posthog-logo.svg">
-          <img alt="PostHog" src="https://posthog.com/brand/posthog-logo.svg">
-        </picture>
-      </a>
-    </td>
-    <td align="center" width="33%">
-      <a href="mailto:contact@nextjs-boilerplate.com">
-        Add your logo here
-      </a>
-    </td>
-  </tr>
-  <tr height="187px">
-    <td align="center" style=width="33%">
-      <a href="https://nextjs-boilerplate.com/pro-saas-starter-kit">
-        <img src="public/assets/images/nextjs-boilerplate-saas.png?raw=true" alt="Next.js SaaS Boilerplate with React" />
-      </a>
-    </td>
-    <td align="center" width="33%">
-      <a href="mailto:contact@nextjs-boilerplate.com">
-        Add your logo here
-      </a>
-    </td>
-  </tr>
-</table>
-
----
-
-Made with ♥ by [CreativeDesignsGuru](https://creativedesignsguru.com) [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/cloudposse.svg?style=social&label=Follow%20%40Ixartz)](https://twitter.com/ixartz)
-
-Looking for a custom boilerplate to kick off your project? I'd be glad to discuss how I can help you build one. Feel free to reach out anytime at contact@nextjs-boilerplate.com!
-
-[![Sponsor Next JS Boilerplate](https://cdn.buymeacoffee.com/buttons/default-red.png)](https://github.com/sponsors/ixartz)
+### Add a new domain API (step-by-step)
+1. Define repository contract in `infrastructure/repository.interface.ts`.
+2. Implement HTTP-backed repository in `infrastructure/api.repository.ts` using `HttpAdapter`.
+3. Add stable keys in `query-keys.ts`.
+4. Add domain hooks for queries/mutations under `hooks/`.
+5. Invalidate domain root/list keys from mutation hooks.
+6. Add optional server prefetch and hydrate path for heavy pages.
+7. Run `npm run typecheck`, `npm run lint`, `npm run check:architecture`, and `npm run build`.

@@ -1,14 +1,23 @@
 import type { NextConfig } from 'next';
 import withBundleAnalyzer from '@next/bundle-analyzer';
 import { withSentryConfig } from '@sentry/nextjs';
-import './src/libs/Env';
+import './src/shared/config/env';
 
 // Define the base Next.js configuration
 const baseConfig: NextConfig = {
   compress: true,
+  output: 'standalone',
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+      },
+    ],
+  },
   experimental: {
     fetchCacheKeyPrefix: 'v1',
-    optimizePackageImports: ['@/modules/common', '@/modules/counter'],
+    optimizePackageImports: ['@/modules/common', '@/modules/admin'],
   },
   async headers() {
     return [
@@ -30,20 +39,6 @@ const baseConfig: NextConfig = {
           {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=()',
-          },
-          {
-            key: 'Content-Security-Policy',
-            value: [
-              'default-src \'self\'',
-              'script-src \'self\' \'unsafe-eval\' \'unsafe-inline\' *.posthog.com *.vercel-insights.com va.vercel-scripts.com',
-              'style-src \'self\' \'unsafe-inline\'',
-              'img-src \'self\' blob: data: https:',
-              'font-src \'self\' data:',
-              'connect-src \'self\' *.posthog.com *.sentry.io *.vercel-insights.com vitals.vercel-insights.com',
-              'frame-ancestors \'self\'',
-              'base-uri \'self\'',
-              'form-action \'self\'',
-            ].join('; '),
           },
         ],
       },

@@ -1,16 +1,18 @@
 import type { MetadataRoute } from 'next';
-import { getBaseUrl } from '@/modules/common';
+import { Env } from '@/shared/config/env';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = getBaseUrl();
+  const baseUrl = Env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+  const routes = [
+    '/',
+    '/admin/products',
+    '/admin/products/create',
+    '/admin/categories',
+    '/admin/brands',
+    '/login',
+  ];
 
-  const routes = ['', '/about', '/counter', '/portfolio'];
-
-  // Generate portfolio detail pages
-  const portfolioRoutes = Array.from({ length: 6 }, (_, i) => `/portfolio/${i}`);
-  const allRoutes = [...routes, ...portfolioRoutes];
-
-  return allRoutes.map(route => ({
+  return routes.map(route => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
   }));

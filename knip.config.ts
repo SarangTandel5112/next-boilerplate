@@ -1,37 +1,61 @@
 import type { KnipConfig } from 'knip';
 
 const config: KnipConfig = {
-  // Files to exclude from Knip analysis
   ignore: [
     '.storybook/**/*',
     'src/modules/common/helpers/common.helper.ts',
     'tests/**/*.ts',
     'lighthouserc.js',
-    'src/libs/feature-flags.ts',
+    'src/shared/lib/feature-flags.ts',
     'src/modules/counter/constants/**',
     'src/modules/counter/helpers/**',
-    'src/libs/monitoring.ts',
+    'src/shared/lib/monitoring.ts',
     'src/modules/common/validations/common.validation.ts',
     'src/modules/common/types/common.type.ts',
     'src/modules/counter/types/counter.types.ts',
     'src/app/(marketing)/counter/actions.ts',
   ],
-  // Dependencies to ignore during analysis
+  ignoreFiles: [
+    'src/modules/brands/components/index.ts',
+    'src/modules/brands/index.ts',
+    'src/modules/categories/components/index.ts',
+    'src/modules/categories/index.ts',
+    'src/modules/common/constants/index.ts',
+    'src/modules/common/dto/index.ts',
+    'src/modules/common/enums/index.ts',
+    'src/modules/common/helpers/index.ts',
+    'src/modules/common/hooks/index.ts',
+    'src/modules/common/mappers/index.ts',
+    'src/modules/common/services/index.ts',
+    'src/modules/common/types/index.ts',
+    'src/modules/common/validations/index.ts',
+    'src/modules/products/schemas/index.ts',
+    'src/modules/products/services/index.ts',
+    'src/shared/hooks/use-feature-flag.ts',
+    'src/shared/lib/http/client-fetcher.ts',
+    'src/shared/lib/http/fetcher.ts',
+    'src/shared/lib/http/server-fetcher.ts',
+  ],
   ignoreDependencies: [
     '@commitlint/types',
+    '@commitlint/prompt-cli',
+    'cheerio',
     'conventional-changelog-conventionalcommits',
     'vite',
     '@faker-js/faker',
     'npm-run-all',
+    'vitest-browser-react',
   ],
-  // Binaries to ignore during analysis
+  ignoreIssues: {
+    'src/server/auth/session.ts': ['exports'],
+    'src/shared/lib/react-query/global-mutation-error.ts': ['exports'],
+  },
   ignoreBinaries: [
-    'production', // False positive raised with dotenv-cli
+    'production',
     'dotenv',
     'checkly',
     'lhci',
   ],
-  // Ignore exports that are only used in the same file
   ignoreExportsUsedInFile: true,
   compilers: {
     css: (text: string) => [...text.matchAll(/(?<=@)import[^;]+/g)].join('\n'),

@@ -1,14 +1,10 @@
-// This file configures the initialization of Sentry on the client.
-// The added config here will be used whenever a users loads a page in their browser.
-// https://docs.sentry.io/platforms/javascript/guides/nextjs/
 import * as Sentry from '@sentry/nextjs';
-import { Env } from '@/libs/Env';
+import posthog from 'posthog-js';
+import { Env } from '@/shared/config/env';
 
 if (!Env.NEXT_PUBLIC_SENTRY_DISABLED) {
   Sentry.init({
     dsn: Env.NEXT_PUBLIC_SENTRY_DSN,
-
-    // Add optional integrations for additional features
     integrations: [
       Sentry.replayIntegration({
         maskAllText: false,
@@ -17,31 +13,27 @@ if (!Env.NEXT_PUBLIC_SENTRY_DISABLED) {
       }),
       Sentry.consoleLoggingIntegration(),
       Sentry.browserTracingIntegration(),
-
-      ...(Env.NODE_ENV === 'development'
-        ? [Sentry.spotlightBrowserIntegration()]
-        : []),
+      ...(Env.NODE_ENV === 'development' ? [Sentry.spotlightBrowserIntegration()] : []),
     ],
-
-    // Adds request headers and IP for users, for more info visit
-    sendDefaultPii: true,
-
-    // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
+    sendDefaultPii: false,
     tracesSampleRate: 1,
-
-    // Define how likely Replay events are sampled.
-    // This sets the sample rate to be 10%. You may want this to be 100% while
-    // in development and sample at a lower rate in production
     replaysSessionSampleRate: 0.1,
-
-    // Define how likely Replay events are sampled when an error occurs.
-    replaysOnErrorSampleRate: 1.0,
-
-    // Enable logs to be sent to Sentry
+    replaysOnErrorSampleRate: 1,
     enableLogs: true,
-
-    // Setting this option to true will print useful information to the console while you're setting up Sentry.
     debug: false,
+  });
+}
+
+if (Env.NEXT_PUBLIC_POSTHOG_KEY && Env.NEXT_PUBLIC_POSTHOG_HOST) {
+  posthog.init(Env.NEXT_PUBLIC_POSTHOG_KEY, {
+    api_host: Env.NEXT_PUBLIC_POSTHOG_HOST,
+    capture_pageview: false,
+    autocapture: true,
+    loaded(instance) {
+      if (Env.NODE_ENV === 'development') {
+        instance.debug();
+      }
+    },
   });
 }
 

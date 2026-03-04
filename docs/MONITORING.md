@@ -173,7 +173,7 @@ Create dashboards in PostHog for:
 PostHog supports feature flags for gradual rollouts:
 
 ```typescript
-import { featureFlags } from '@/libs/feature-flags';
+import { featureFlags } from '@/shared/lib/feature-flags';
 
 if (featureFlags.isEnabled('new-counter-design')) {
   return <NewCounterWidget />;

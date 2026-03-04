@@ -44,7 +44,7 @@ npm run start
 **Where it’s configured**
 - `src/modules/common/components/PostHogProvider.tsx`
 - `src/modules/common/components/PostHogPageView.tsx`
-- `src/libs/feature-flags.ts`
+- `src/shared/lib/feature-flags.ts`
 
 **Environment variables**
 - `NEXT_PUBLIC_POSTHOG_KEY`

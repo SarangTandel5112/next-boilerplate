@@ -15,7 +15,7 @@ Welcome! This guide will help you contribute to the project.
 1. **Clone and install:**
    ```bash
    git clone <repo-url>
-   cd next-js-boilerplate
+   cd nextjs-enterprise-boilerplate
    npm install
    ```
 

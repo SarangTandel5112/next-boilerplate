@@ -1,16 +1,18 @@
 import Link from 'next/link';
-import { ROUTES } from '@/modules/common';
+import { buttonVariants, cn } from '@/modules/common';
 
-export default function NotFound() {
+export default function NotFoundPage() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-4">
-      <h1 className="text-4xl font-bold">404</h1>
-      <p className="text-gray-600">Page not found</p>
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-neutral-950 px-6 text-center text-neutral-100">
+      <h1 className="text-2xl font-semibold">Page not found</h1>
+      <p className="text-sm text-neutral-400">
+        The admin page you are looking for does not exist.
+      </p>
       <Link
-        href={ROUTES.HOME}
-        className="rounded-lg bg-gray-900 px-4 py-2 text-white hover:bg-gray-700"
+        href="/admin"
+        className={cn(buttonVariants({ variant: 'default' }))}
       >
-        Go home
+        Back to home
       </Link>
     </div>
   );

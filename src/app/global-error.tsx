@@ -1,30 +1,30 @@
 'use client';
-import NextError from 'next/error';
 import { useEffect } from 'react';
+import { logger } from '@/shared/lib/monitoring';
 
 export default function GlobalError(props: {
   error: Error & { digest?: string };
 }) {
   useEffect(() => {
-    // Log error to console in all environments for debugging
-    console.error('Global error:', props.error);
-
-    // Sentry automatically handles environment detection via sentry.client.config.ts
-    if (typeof window !== 'undefined') {
-      import('@sentry/nextjs').then((Sentry) => {
-        Sentry.captureException(props.error);
-      });
-    }
+    logger.error('Global error boundary triggered', props.error, {
+      digest: props.error.digest,
+    });
   }, [props.error]);
 
   return (
     <html lang="en">
-      <body>
-        {/* `NextError` is the default Next.js error page component. Its type
-        definition requires a `statusCode` prop. However, since the App Router
-        does not expose status codes for errors, we simply pass 0 to render a
-        generic error message. */}
-        <NextError statusCode={0} />
+      <body className="bg-neutral-950 text-neutral-100">
+        <main className="flex min-h-screen items-center justify-center px-6">
+          <section className="w-full max-w-lg rounded-xl border border-neutral-800 bg-neutral-900/70 p-6">
+            <h1 className="text-2xl font-semibold">Unexpected application error</h1>
+            <p className="mt-2 text-sm text-neutral-300">
+              A critical error occurred. Please reload the page.
+            </p>
+            {props.error.digest
+              ? <p className="mt-3 text-xs text-neutral-400">{`Request ID: ${props.error.digest}`}</p>
+              : null}
+          </section>
+        </main>
       </body>
     </html>
   );

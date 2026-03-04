@@ -1,6 +1,7 @@
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import antfu from '@antfu/eslint-config';
+import boundaries from 'eslint-plugin-boundaries';
 import jsdoc from 'eslint-plugin-jsdoc';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import playwright from 'eslint-plugin-playwright';
@@ -68,7 +69,7 @@ export default antfu(
       'ts/consistent-type-definitions': ['error', 'type'], // Use `type` instead of `interface`
       'react/prefer-destructuring-assignment': 'off', // Vscode doesn't support automatically destructuring, it's a pain to add a new variable
       'react-hooks/incompatible-library': 'off', // Disable warning for compilation skipped
-      'react-hooks/exhaustive-deps': 'off', // Disable exhaustive-deps in useEffect
+      'react-hooks/exhaustive-deps': 'error', // Enforce full effect dependencies
       'node/prefer-global/process': 'off', // Allow using `process.env`
       'ts/no-explicit-any': 'error', // Disallow `any`
       'test/padding-around-all': 'error', // Add padding in test files
@@ -76,6 +77,32 @@ export default antfu(
       'jsdoc/require-jsdoc': 'off', // JSDoc comments are optional
       'jsdoc/require-returns': 'off', // Return types are optional
       'jsdoc/require-hyphen-before-param-description': 'error', // Enforce hyphen before param description
+    },
+  },
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    plugins: {
+      boundaries,
+    },
+    settings: {
+      'boundaries/include': ['src/**/*.{ts,tsx}'],
+      'boundaries/elements': [
+        { type: 'app', pattern: 'src/app/**' },
+        { type: 'modules', pattern: 'src/modules/**' },
+        { type: 'server', pattern: 'src/server/**' },
+        { type: 'shared', pattern: 'src/shared/**' },
+      ],
+    },
+    rules: {
+      'boundaries/element-types': ['error', {
+        default: 'allow',
+        rules: [
+          { from: 'shared', disallow: ['modules', 'app', 'server'] },
+          { from: 'modules', disallow: ['app'] },
+          { from: 'server', disallow: ['app'] },
+          { from: 'app', allow: ['app', 'modules', 'server', 'shared'] },
+        ],
+      }],
     },
   },
   // Ensure docs and markdown are never linted as code
