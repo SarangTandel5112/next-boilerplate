@@ -1,77 +1,61 @@
-import type { RateLimitStore } from './rate-limit.interface';
 import { AppError } from '@/server/errors/app-error';
-import { Env } from '@/shared/config/env';
-import { MemoryRateLimitStore } from './memory-rate-limit';
-import { RedisRateLimitStore } from './redis-rate-limit';
 
-let rateLimitStore: RateLimitStore | undefined;
-
-const resolveRateLimitStore = (): RateLimitStore => {
-  if (rateLimitStore) {
-    return rateLimitStore;
-  }
-
-  const isProduction = Env.NODE_ENV === 'production';
-  const redisUrl = Env.REDIS_URL?.trim();
-
-  if (isProduction && !redisUrl) {
-    throw new Error('[RateLimit] REDIS_URL is required in production');
-  }
-
-  if (redisUrl) {
-    rateLimitStore = new RedisRateLimitStore({
-      redisUrl,
-    });
-
-    return rateLimitStore;
-  }
-
-  rateLimitStore = new MemoryRateLimitStore();
-
-  return rateLimitStore;
+type RateLimitBucket = {
+  count: number;
+  resetAt: number;
 };
+
+const rateLimitStore = new Map<string, RateLimitBucket>();
 
 export const getClientIp = (request: Request) => {
-  const forwardedFor = request.headers.get('x-forwarded-for');
-  const realIp = request.headers.get('x-real-ip');
+  const forwarded = request.headers.get('x-forwarded-for');
 
-  if (forwardedFor) {
-    return forwardedFor.split(',')[0]?.trim() ?? 'unknown';
+  if (forwarded) {
+    return forwarded.split(',')[0]?.trim() ?? 'unknown';
   }
 
-  return realIp ?? 'unknown';
+  const realIp = request.headers.get('x-real-ip');
+
+  if (realIp) {
+    return realIp.trim();
+  }
+
+  const cfIp = request.headers.get('cf-connecting-ip');
+
+  if (cfIp) {
+    return cfIp.trim();
+  }
+
+  return 'unknown';
 };
 
-export const assertRateLimit = async (options: {
+export const assertRateLimit = (options: {
   key: string;
   limit: number;
   windowMs: number;
 }) => {
-  try {
-    const result = await resolveRateLimitStore().increment({
-      key: options.key,
-      windowMs: options.windowMs,
+  const now = Date.now();
+  const existingBucket = rateLimitStore.get(options.key);
+
+  if (!existingBucket || existingBucket.resetAt <= now) {
+    rateLimitStore.set(options.key, {
+      count: 1,
+      resetAt: now + options.windowMs,
     });
+    return;
+  }
 
-    if (result.count > options.limit) {
-      throw new AppError({
-        code: 'RATE_LIMIT_EXCEEDED',
-        message: 'Too many requests',
-        statusCode: 429,
-        details: {
-          retryAfterMs: Math.max(0, result.resetAt - Date.now()),
-        },
-      });
-    }
-  } catch (error) {
-    if (error instanceof AppError) {
-      throw error;
-    }
-
+  if (existingBucket.count >= options.limit) {
     throw new AppError({
-      code: 'RATE_LIMIT_UNAVAILABLE',
-      message: 'Rate limiting service unavailable',
-      statusCode: 503,
+      code: 'RATE_LIMIT_EXCEEDED',
+      message: 'Too many requests',
+      statusCode: 429,
+      details: {
+        retryAfterMs: existingBucket.resetAt - now,
+      },
     });
   }
+
+  existingBucket.count += 1;
+  rateLimitStore.set(options.key, existingBucket);
 };

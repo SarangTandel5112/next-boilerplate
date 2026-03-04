@@ -1,11 +1,9 @@
-import dynamic from 'next/dynamic';
+import { redirect } from 'next/navigation';
 
-const EditProductPageView = dynamic(
-  () => import('@/modules/products').then(module => module.EditProductView),
-);
-
+// Temporary route fallback while product edit UI is unavailable.
+// Remove this redirect when the products module is reintroduced.
 export default async function EditProductPage(props: { params: Promise<{ id: string }> }) {
-  const { id } = await props.params;
+  await props.params;
 
-  return <EditProductPageView id={id} />;
+  redirect('/admin/products');
 }

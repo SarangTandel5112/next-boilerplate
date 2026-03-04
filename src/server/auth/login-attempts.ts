@@ -1,40 +1,29 @@
 import { AppError } from '@/server/errors/app-error';
 
-const MAX_FAILED_LOGIN_ATTEMPTS = 5;
+const MAX_FAILED_ATTEMPTS = 5;
 const LOCK_DURATION_MS = 15 * 60 * 1000;
 
-type LoginAttemptState = {
+type AttemptState = {
   failedCount: number;
-  lockedUntil: number | null;
+  lockedUntil?: number;
 };
 
-const loginAttempts = new Map<string, LoginAttemptState>();
+const attemptStore = new Map<string, AttemptState>();
 
-const normalizeIdentifier = (identifier: string) => {
-  return identifier.trim().toLowerCase();
+const getKey = (email: string) => {
+  return email.trim().toLowerCase();
 };
 
-const getRemainingLockMs = (state: LoginAttemptState, now: number) => {
-  if (!state.lockedUntil) {
-    return 0;
-  }
-
-  return Math.max(0, state.lockedUntil - now);
-};
-
-export const assertAccountNotLocked = (identifier: string) => {
-  const normalizedIdentifier = normalizeIdentifier(identifier);
-  const state = loginAttempts.get(normalizedIdentifier);
-
-  if (!state?.lockedUntil) {
-    return;
-  }
-
+export const assertAccountNotLocked = (email: string) => {
+  const key = getKey(email);
+  const state = attemptStore.get(key);
   const now = Date.now();
-  const remainingLockMs = getRemainingLockMs(state, now);
 
-  if (remainingLockMs <= 0) {
-    loginAttempts.delete(normalizedIdentifier);
+  if (!state?.lockedUntil || state.lockedUntil <= now) {
+    if (state?.lockedUntil && state.lockedUntil <= now) {
+      attemptStore.delete(key);
+    }
+
     return;
   }
 
@@ -43,44 +32,48 @@ export const assertAccountNotLocked = (identifier: string) => {
     message: 'Account temporarily locked',
     statusCode: 423,
     details: {
-      retryAfterMs: remainingLockMs,
+      retryAfterMs: state.lockedUntil - now,
     },
   });
 };
 
-export const registerFailedLoginAttempt = (identifier: string) => {
-  const normalizedIdentifier = normalizeIdentifier(identifier);
-  const currentState = loginAttempts.get(normalizedIdentifier) ?? {
-    failedCount: 0,
-    lockedUntil: null,
-  };
+export const registerFailedLoginAttempt = (email: string) => {
+  const key = getKey(email);
   const now = Date.now();
+  const state = attemptStore.get(key);
 
-  if (currentState.lockedUntil && currentState.lockedUntil > now) {
+  if (state?.lockedUntil && state.lockedUntil > now) {
     return {
       isLocked: true,
-      retryAfterMs: currentState.lockedUntil - now,
-      failedCount: currentState.failedCount,
+      retryAfterMs: state.lockedUntil - now,
     };
   }
 
-  const failedCount = currentState.failedCount + 1;
-  const nextState: LoginAttemptState = {
-    failedCount,
-    lockedUntil: failedCount >= MAX_FAILED_LOGIN_ATTEMPTS
-      ? now + LOCK_DURATION_MS
-      : null,
-  };
+  const failedCount = (state?.failedCount ?? 0) + 1;
 
-  loginAttempts.set(normalizedIdentifier, nextState);
+  if (failedCount >= MAX_FAILED_ATTEMPTS) {
+    const lockedUntil = now + LOCK_DURATION_MS;
+    attemptStore.set(key, {
+      failedCount,
+      lockedUntil,
+    });
+
+    return {
+      isLocked: true,
+      retryAfterMs: LOCK_DURATION_MS,
+    };
+  }
+
+  attemptStore.set(key, {
+    failedCount,
+  });
 
   return {
-    isLocked: Boolean(nextState.lockedUntil),
-    retryAfterMs: nextState.lockedUntil ? nextState.lockedUntil - now : 0,
-    failedCount,
+    isLocked: false,
+    retryAfterMs: 0,
   };
 };
 
-export const clearLoginAttempts = (identifier: string) => {
-  loginAttempts.delete(normalizeIdentifier(identifier));
+export const clearLoginAttempts = (email: string) => {
+  attemptStore.delete(getKey(email));
 };

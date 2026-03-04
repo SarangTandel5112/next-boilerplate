@@ -1,61 +1,19 @@
-import type { ProductListFilters } from '@/modules/products/types';
-import dynamic from 'next/dynamic';
-import { getProductFilterMeta, listProducts } from '@/modules/products/services/product.service';
-import { APP_CONFIG } from '@/shared/config/app-config';
+import Link from 'next/link';
 
-const ProductsAdminPageView = dynamic(
-  () => import('@/modules/products/components/ProductsAdminPage').then(module => module.ProductsAdminPage),
-);
-
-const getSearchParamValue = (value?: string | string[]) => {
-  if (Array.isArray(value)) {
-    return value[0];
-  }
-
-  return value;
-};
-
-const parsePage = (value?: string) => {
-  const parsed = Number(value);
-
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
-};
-
-const parseStatus = (value?: string): ProductListFilters['status'] => {
-  if (value === 'active' || value === 'inactive') {
-    return value;
-  }
-
-  return 'all';
-};
-
-export default async function AdminProductsPage(props: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const searchParams = await props.searchParams;
-  const filters: ProductListFilters = {
-    search: getSearchParamValue(searchParams.q) ?? '',
-    brand: getSearchParamValue(searchParams.brand) ?? 'all',
-    category: getSearchParamValue(searchParams.category) ?? 'all',
-    status: parseStatus(getSearchParamValue(searchParams.status)),
-  };
-
-  const initialQuery = {
-    page: parsePage(getSearchParamValue(searchParams.page)),
-    pageSize: APP_CONFIG.pagination.defaultPageSize,
-    filters,
-  };
-
-  const [initialListData, initialFilterMeta] = await Promise.all([
-    listProducts(initialQuery).catch(() => undefined),
-    getProductFilterMeta().catch(() => undefined),
-  ]);
-
+// Temporary fallback page until the products module is restored.
+// Remove this page-level placeholder when products development resumes.
+export default function AdminProductsPage() {
   return (
-    <ProductsAdminPageView
-      initialListData={initialListData}
-      initialFilterMeta={initialFilterMeta}
-      initialQuery={initialQuery}
-    />
+    <section className="rounded-2xl border border-neutral-800 bg-neutral-900/70 p-6 md:p-8">
+      <h1 className="text-2xl font-semibold text-neutral-50 md:text-3xl">Products unavailable</h1>
+      <p className="mt-2 text-sm text-neutral-300 md:text-base">
+        Products module is currently not included in this build.
+      </p>
+      <p className="mt-4">
+        <Link className="text-sm font-medium text-blue-300 hover:text-blue-200" href="/admin/brands">
+          Go to brands
+        </Link>
+      </p>
+    </section>
   );
 }

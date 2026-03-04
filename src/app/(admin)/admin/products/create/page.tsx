@@ -1,9 +1,7 @@
-import dynamic from 'next/dynamic';
+import { redirect } from 'next/navigation';
 
-const CreateProductPageView = dynamic(
-  () => import('@/modules/products').then(module => module.CreateProductView),
-);
-
+// Temporary route fallback while product create UI is unavailable.
+// Remove this redirect when the products module is reintroduced.
 export default function CreateProductPage() {
-  return <CreateProductPageView />;
+  redirect('/admin/products');
 }

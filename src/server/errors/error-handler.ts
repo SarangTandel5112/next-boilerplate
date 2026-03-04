@@ -1,12 +1,42 @@
-import type { Logger } from 'pino';
+import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { ZodError } from 'zod';
-import { createRequestLogger } from '@/server/logging/logger';
-import { assertCsrfToken } from '@/server/security/csrf';
-import { AppError } from './app-error';
+import { AppError } from '@/server/errors/app-error';
+import { createRouteLogger } from '@/server/logging/logger';
+import { CSRF_COOKIE_NAME, CSRF_HEADER_NAME } from '@/shared/config/security';
 
-const isMutationMethod = (method: string) => {
-  return ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method.toUpperCase());
+type RouteParams = Record<string, string>;
+
+export type RouteHandlerOptions<TParams extends RouteParams = RouteParams> = {
+  logger: ReturnType<typeof createRouteLogger>;
+  request: NextRequest;
+  params?: TParams;
+};
+
+type RouteHandler<TParams extends RouteParams = RouteParams> = (
+  options: RouteHandlerOptions<TParams>,
+) => Promise<NextResponse> | NextResponse;
+
+const shouldValidateCsrf = (request: NextRequest, csrf: 'enabled' | 'disabled') => {
+  if (csrf === 'disabled') {
+    return false;
+  }
+
+  const readMethods = ['GET', 'HEAD', 'OPTIONS'];
+  return !readMethods.includes(request.method);
+};
+
+const validateCsrf = (request: NextRequest) => {
+  const cookieToken = request.cookies.get(CSRF_COOKIE_NAME)?.value;
+  const headerToken = request.headers.get(CSRF_HEADER_NAME);
+  const decodedCookie = cookieToken ? decodeURIComponent(cookieToken) : undefined;
+
+  if (!decodedCookie || !headerToken || decodedCookie !== headerToken) {
+    throw new AppError({
+      code: 'CSRF_VALIDATION_FAILED',
+      message: 'Invalid CSRF token',
+      statusCode: 403,
+    });
+  }
 };
 
 const toAppError = (error: unknown) => {
@@ -14,99 +44,73 @@ const toAppError = (error: unknown) => {
     return error;
   }
 
-  if (error instanceof ZodError) {
-    return new AppError({
-      code: 'VALIDATION_ERROR',
-      message: 'Invalid request payload',
-      statusCode: 400,
-      details: error.flatten(),
-    });
-  }
-
-  if (error instanceof SyntaxError) {
-    return new AppError({
-      code: 'INVALID_JSON',
-      message: 'Invalid JSON payload',
-      statusCode: 400,
-    });
-  }
-
   if (error instanceof Error) {
     return new AppError({
       code: 'INTERNAL_SERVER_ERROR',
-      message: 'Unexpected server error',
+      message: error.message || 'Internal server error',
       statusCode: 500,
-      details: {
-        originalMessage: error.message,
-      },
     });
   }
 
   return new AppError({
     code: 'INTERNAL_SERVER_ERROR',
-    message: 'Unexpected server error',
+    message: 'Internal server error',
     statusCode: 500,
   });
 };
 
-export const handleRouteError = (options: {
-  error: unknown;
-  requestId: string;
-  logger: Logger;
-}) => {
-  const normalizedError = toAppError(options.error);
-
-  options.logger.error({
-    err: options.error,
-    statusCode: normalizedError.statusCode,
-    errorCode: normalizedError.code,
-    errorDetails: normalizedError.details,
-  }, normalizedError.message);
-
-  return NextResponse.json({
-    success: false,
-    error: {
-      code: normalizedError.code,
-      message: normalizedError.message,
-    },
-    requestId: options.requestId,
-  }, {
-    status: normalizedError.statusCode,
-  });
-};
-
-export const withRouteHandler = (
-  handler: (options: { request: Request; requestId: string; logger: Logger }) => Promise<Response>,
-  options?: { csrf?: 'required' | 'disabled' },
+export const withRouteHandler = <TParams extends RouteParams = RouteParams>(
+  handler: RouteHandler<TParams>,
+  options?: {
+    csrf?: 'enabled' | 'disabled';
+  },
 ) => {
-  return async (request: Request) => {
-    const url = new URL(request.url);
+  return async (request: NextRequest, context?: { params?: Promise<TParams> }) => {
     const requestId = request.headers.get('x-request-id') ?? crypto.randomUUID();
-    const requestLogger = createRequestLogger({
+    const pathname = new URL(request.url).pathname;
+    const logger = createRouteLogger({
       requestId,
       method: request.method,
-      pathname: url.pathname,
+      path: pathname,
     });
 
     try {
-      if ((options?.csrf ?? 'required') === 'required' && isMutationMethod(request.method)) {
-        assertCsrfToken(request);
+      if (shouldValidateCsrf(request, options?.csrf ?? 'enabled')) {
+        validateCsrf(request);
       }
 
+      const params = context?.params ? await context.params : undefined;
       const response = await handler({
+        logger,
         request,
-        requestId,
-        logger: requestLogger,
+        params,
       });
 
       response.headers.set('x-request-id', requestId);
 
       return response;
     } catch (error) {
-      return handleRouteError({
-        error,
+      const appError = toAppError(error);
+
+      logger.error({
+        code: appError.code,
+        details: appError.details,
+        statusCode: appError.statusCode,
+      }, appError.message);
+
+      return NextResponse.json({
+        success: false,
+        error: {
+          code: appError.code,
+          message: appError.message,
+          ...(appError.details === undefined ? {} : { details: appError.details }),
+        },
         requestId,
-        logger: requestLogger,
+      }, {
+        status: appError.statusCode,
+        headers: {
+          'x-request-id': requestId,
+        },
       });
     }
   };

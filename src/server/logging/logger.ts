@@ -1,43 +1,65 @@
-import pino from 'pino';
-import { Env } from '@/shared/config/env';
-
-const toServerLogLevel = () => {
-  if (Env.LOG_LEVEL) {
-    return Env.LOG_LEVEL;
-  }
-
-  if (Env.NEXT_PUBLIC_LOGGING_LEVEL === 'warning') {
-    return 'warn';
-  }
-
-  return Env.NEXT_PUBLIC_LOGGING_LEVEL;
+export type RouteLogger = {
+  debug: (...args: [string] | [Record<string, unknown>, string]) => void;
+  info: (...args: [string] | [Record<string, unknown>, string]) => void;
+  warn: (...args: [string] | [Record<string, unknown>, string]) => void;
+  error: (...args: [string] | [Record<string, unknown>, string]) => void;
 };
 
-export const logger = pino({
-  level: toServerLogLevel(),
-  base: undefined,
-  timestamp: pino.stdTimeFunctions.isoTime,
-  redact: {
-    paths: [
-      'password',
-      '*.password',
-      'req.headers.authorization',
-      'req.headers.cookie',
-      'headers.authorization',
-      'headers.cookie',
-    ],
-    remove: true,
-  },
-});
+const toLogPayload = (args: [string] | [Record<string, unknown>, string]) => {
+  if (typeof args[0] === 'string') {
+    return {
+      message: args[0],
+      meta: undefined,
+    };
+  }
 
-export const createRequestLogger = (options: {
+  return {
+    message: args[1],
+    meta: args[0],
+  };
+};
+
+export const createRouteLogger = (context: {
   requestId: string;
   method: string;
-  pathname: string;
-}) => {
-  return logger.child({
-    requestId: options.requestId,
-    requestMethod: options.method,
-    requestPath: options.pathname,
-  });
+  path: string;
+}): RouteLogger => {
+  const write = (
+    level: 'debug' | 'info' | 'warn' | 'error',
+    args: [string] | [Record<string, unknown>, string],
+  ) => {
+    const payload = toLogPayload(args);
+    const entry = {
+      level,
+      requestId: context.requestId,
+      method: context.method,
+      path: context.path,
+      message: payload.message,
+      ...(payload.meta ? { meta: payload.meta } : {}),
+    };
+
+    if (level === 'error') {
+      console.error(entry);
+      return;
+    }
+
+    if (level === 'warn') {
+      console.warn(entry);
+      return;
+    }
+
+    if (level === 'debug') {
+      console.warn(entry);
+      return;
+    }
+
+    console.warn(entry);
+  };
+
+  return {
+    debug: (...args) => write('debug', args),
+    info: (...args) => write('info', args),
+    warn: (...args) => write('warn', args),
+    error: (...args) => write('error', args),
+  };
 };

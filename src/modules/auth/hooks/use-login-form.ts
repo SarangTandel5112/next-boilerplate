@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { CSRF_COOKIE_NAME, CSRF_HEADER_NAME } from '@/shared/config/security';
-import { loginValidationSchema } from '../validations';
+import { loginValidationSchema } from '../schemas';
 
 const defaultValues: LoginFormValues = {
   email: '',

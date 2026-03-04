@@ -3,16 +3,11 @@ export class AppError extends Error {
   statusCode: number;
   details?: unknown;
 
-  constructor(options: {
-    code: string;
-    message: string;
-    statusCode?: number;
-    details?: unknown;
-  }) {
+  constructor(options: { code: string; message: string; statusCode: number; details?: unknown }) {
     super(options.message);
     this.name = 'AppError';
     this.code = options.code;
-    this.statusCode = options.statusCode ?? 500;
+    this.statusCode = options.statusCode;
     this.details = options.details;
   }
 }

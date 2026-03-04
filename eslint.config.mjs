@@ -77,6 +77,12 @@ export default antfu(
       'jsdoc/require-jsdoc': 'off', // JSDoc comments are optional
       'jsdoc/require-returns': 'off', // Return types are optional
       'jsdoc/require-hyphen-before-param-description': 'error', // Enforce hyphen before param description
+      'no-await-in-loop': 'error',
+      'require-await': 'warn', // async function that never awaits anything = probably a mistake
+      'no-async-promise-executor': 'error', // Catches new Promise(async (resolve) => ...) anti-pattern
+      'no-promise-executor-return': 'error', // Catches returning a value inside a Promise executor
+      'no-return-await': 'warn', // Avoids redundant `return await value` outside of try/catch
+
     },
   },
   {
